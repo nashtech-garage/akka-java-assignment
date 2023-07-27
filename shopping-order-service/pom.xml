@@ -23,6 +23,7 @@
              It can be defined with -Dversion.number=0.1-SNAPSHOT if git is not used -->
 		<version.number>${git.commit.time}-${git.commit.id.abbrev}</version.number>
 		<akka-diagnostics.version>2.0.0</akka-diagnostics.version>
+		<lombok.version>1.18.28</lombok.version>
 	</properties>
 
 	<dependencyManagement>
@@ -41,6 +42,14 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
 
@@ -136,6 +145,17 @@
 			<version>2.4</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310 -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.15.2</version>
+		</dependency>
 
 	</dependencies>
 
@@ -153,6 +173,13 @@
 						<arg>-Xlint:deprecation</arg>
 						<arg>-parameters</arg>
 					</compilerArgs>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>

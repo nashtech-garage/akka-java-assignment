@@ -41,9 +41,9 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 	interface Command {
 	}
 
-	private OrderActors(ActorContext<Command> context) {
+	private OrderActors(ActorContext<Command> context, OrderService orderService) {
 		super(context);
-		orderService = new OrderServiceImpl();
+		this.orderService = orderService;
 	}
 
 	private Behavior<Command> onCreateOrder(CreateOrder createOrder) {
@@ -51,8 +51,10 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		return this;
 	}
 
-	public static Behavior<Command> create() {
-		return Behaviors.setup(OrderActors::new);
+	public static Behavior<Command> create(OrderService orderService) {
+		return Behaviors.setup(ctx -> {
+			return new OrderActors(ctx, orderService);
+		});
 	}
 
 	@Override
