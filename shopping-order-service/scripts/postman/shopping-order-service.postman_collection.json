@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "9e6ca9d4-e724-4fa4-a76f-9f4f23318e46",
+		"_postman_id": "36c755fe-8fc8-43a9-9a32-4b1f5c78d788",
 		"name": "shopping-order-service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "259031"
+		"_exporter_id": "181560",
+		"_collection_link": "https://galactic-trinity-356823.postman.co/workspace/YAS~0d70f927-7671-4914-8c72-5c528aa3220f/collection/181560-36c755fe-8fc8-43a9-9a32-4b1f5c78d788?action=share&creator=181560&source=collection_link"
 	},
 	"item": [
 		{
@@ -29,6 +30,34 @@
 					"port": "8080",
 					"path": [
 						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FindOrderById",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateOrder",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/orders/200df737-ecde-46d5-994c-c8b759c867fc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						"200df737-ecde-46d5-994c-c8b759c867fc"
 					]
 				}
 			},
