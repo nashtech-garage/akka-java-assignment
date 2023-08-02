@@ -1,15 +1,75 @@
 {
 	"info": {
-		"_postman_id": "9e6ca9d4-e724-4fa4-a76f-9f4f23318e46",
+		"_postman_id": "43ac3261-a54f-4e29-9881-585d212e3b45",
 		"name": "shopping-order-service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "259031"
+		"_exporter_id": "20501350"
 	},
 	"item": [
 		{
 			"name": "CreateOrder",
 			"request": {
 				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": 2,\r\n    \"totalAmount\": 10,\r\n    \"quantity\": 10\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateOrder",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": 1,\r\n    \"totalAmount\": 1,\r\n    \"quantity\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/orders/f4f9ea5b-f6cf-4c81-b10f-0bceb26c6708",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						"f4f9ea5b-f6cf-4c81-b10f-0bceb26c6708"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOrder",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
 				"header": [],
 				"body": {
 					"mode": "raw",
@@ -21,14 +81,15 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/orders",
+					"raw": "http://localhost:8081/orders/f4f9ea5b-f6cf-4c81-b10f-0bceb26c6708",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
-						"orders"
+						"orders",
+						"f4f9ea5b-f6cf-4c81-b10f-0bceb26c6708"
 					]
 				}
 			},

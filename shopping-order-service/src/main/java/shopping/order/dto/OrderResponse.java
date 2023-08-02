@@ -11,7 +11,6 @@ import shopping.order.entity.OrderStatus;
 
 /**
  * @author loinguyenx
- *
  */
 @Data
 @AllArgsConstructor
@@ -19,5 +18,9 @@ import shopping.order.entity.OrderStatus;
 @Builder
 public class OrderResponse {
     private String orderId;
+    private long productId;
+    private long quantity;
+    private String orderDate;
+    private long totalAmount;
     private OrderStatus orderStatus;
 }
