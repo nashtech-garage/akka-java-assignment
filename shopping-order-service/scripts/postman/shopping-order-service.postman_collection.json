@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "9e6ca9d4-e724-4fa4-a76f-9f4f23318e46",
+		"_postman_id": "b17e9456-8f7a-4308-93cf-72d23e4c8b43",
 		"name": "shopping-order-service",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "259031"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -29,6 +28,55 @@
 					"port": "8081",
 					"path": [
 						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateOrder",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\": 1,\r\n    \"totalAmount\": 800\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/orders/ad33f49b-2ed3-4c3f-9251-a0bc315a3b90",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						"ad33f49b-2ed3-4c3f-9251-a0bc315a3b90"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getOrder",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/orders/ad33f49b-2ed3-4c3f-9251-a0bc315a3b90",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						"ad33f49b-2ed3-4c3f-9251-a0bc315a3b90"
 					]
 				}
 			},
