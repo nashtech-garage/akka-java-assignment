@@ -21,4 +21,5 @@ public class OrderResponse {
 	private String orderId;
 	private long productId;
 	private OrderStatus orderStatus;
+	private String orderDate;
 }

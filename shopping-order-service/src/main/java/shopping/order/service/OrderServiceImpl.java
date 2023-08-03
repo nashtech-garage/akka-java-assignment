@@ -2,6 +2,7 @@ package shopping.order.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -56,7 +57,11 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	private static OrderResponse toOrderResponse(Order order) {
-		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).productId(order.getProductId()).build();
+		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).productId(order.getProductId()).orderDate(formatOrderDate(order.getOrderDate())).build();
+	}
+
+	private static String formatOrderDate(LocalDateTime orderDate) {
+		return orderDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 	}
 
 }

@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cartId\": 1,\r\n    \"items\": [\r\n        {\r\n            \"itemId\": 1,\r\n            \"quantity\": 5\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"productId\": 2,\r\n    \"quantity\": 4,\r\n    \"totalAmount\": 3000\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,12 +21,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/orders",
+					"raw": "http://localhost:8081/orders",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
 						"orders"
 					]
@@ -41,7 +41,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"productId\": 2,\r\n    \"quantity\": 1,\r\n    \"totalAmount\": 1000\r\n}",
+					"raw": "{\r\n    \"id\": \"b3aa193b-7b05-4a56-b902-efb2313fa0d6\",\r\n    \"productId\": 1,\r\n    \"quantity\": 3,\r\n    \"totalAmount\": 2000\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -64,30 +64,19 @@
 		},
 		{
 			"name": "Get Order",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"cartId\": 1,\r\n    \"items\": [\r\n        {\r\n            \"itemId\": 1,\r\n            \"quantity\": 5\r\n        }\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
-					"raw": "http://localhost:8080/orders",
+					"raw": "http://localhost:8081/orders/5f2e31c0-c025-497d-92e1-814b705b8ade",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8081",
 					"path": [
-						"orders"
+						"orders",
+						"5f2e31c0-c025-497d-92e1-814b705b8ade"
 					]
 				}
 			},
