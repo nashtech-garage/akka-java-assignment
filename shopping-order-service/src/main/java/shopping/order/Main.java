@@ -1,5 +1,13 @@
 package shopping.order;
 
+import akka.http.javadsl.marshallers.jackson.Jackson;
+import akka.http.javadsl.marshalling.Marshaller;
+import akka.http.javadsl.model.RequestEntity;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.ApplicationContext;
 
 import akka.NotUsed;
@@ -14,6 +22,12 @@ import shopping.order.service.OrderServiceImpl;
 
 public class Main {
 
+	private static final ObjectMapper objectmapper = JsonMapper.builder()
+			.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+			.disable(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS)
+			.addModule(new JavaTimeModule())
+			.build();
+
 	public static void main(String[] args) throws Exception {
 		// #server-bootstrapping
 
@@ -22,7 +36,8 @@ public class Main {
 			OrderRepository orderRepository = springContext.getBean(OrderRepository.class);
 			OrderService orderService = new OrderServiceImpl(orderRepository);
 			ActorRef<OrderActors.Command> actorRef = context.spawn(OrderActors.create(orderService), "OrderService");
-			OrderServiceRoutes orderRoutes = new OrderServiceRoutes(context.getSystem(), actorRef);
+			final Marshaller<Object, RequestEntity> marshaller = Jackson.marshaller(objectmapper);
+			OrderServiceRoutes orderRoutes = new OrderServiceRoutes(context.getSystem(), actorRef, marshaller);
 
 			OrderServiceHttpServer.startHTTPServer(orderRoutes.routes(), context.getSystem());
 			return Behaviors.empty();
