@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import shopping.order.entity.OrderStatus;
 
+import java.time.LocalDateTime;
+
 /**
  * @author loinguyenx
  *
@@ -20,4 +22,8 @@ import shopping.order.entity.OrderStatus;
 public class OrderResponse {
 	private String orderId;
 	private OrderStatus orderStatus;
+	private long productId;
+	private long quantity;
+	private LocalDateTime orderDate;
+	private long amount;
 }

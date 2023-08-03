@@ -12,7 +12,6 @@ import akka.actor.typed.javadsl.Receive;
 import shopping.order.dto.OrderRequest;
 import shopping.order.dto.OrderResponse;
 import shopping.order.service.OrderService;
-import shopping.order.service.OrderServiceImpl;
 
 public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
@@ -27,6 +26,15 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 			this.replyTo = replyTo;
 		}
 	}
+	public static final class GetOrder implements Command {
+		public final String id;
+		public final ActorRef<ActionPerformed> replyTo;
+		public GetOrder(String id, ActorRef<ActionPerformed> replyTo) {
+			this.id = id;
+			this.replyTo = replyTo;
+		}
+	}
+
 
 	public static final class ActionPerformed implements Command {
 		public final OrderResponse orderResponse;
@@ -50,6 +58,10 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		createOrder.replyTo.tell(new ActionPerformed(orderService.createOrder(createOrder.orderRequest)));
 		return this;
 	}
+	private Behavior<Command> onGetOrder(GetOrder getOrder){
+		getOrder.replyTo.tell(new ActionPerformed(orderService.getOrder(getOrder.id)));
+		return this;
+	}
 
 	public static Behavior<Command> create(OrderService orderService) {
 		return Behaviors.setup(ctx -> {
@@ -59,7 +71,7 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
 	@Override
 	public Receive<Command> createReceive() {
-		return newReceiveBuilder().onMessage(CreateOrder.class, this::onCreateOrder).build();
+		return newReceiveBuilder().onMessage(CreateOrder.class, this::onCreateOrder).onMessage(GetOrder.class, this::onGetOrder).build();
 	}
 
 }

@@ -1,6 +1,5 @@
 package shopping.order.service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -28,6 +27,11 @@ public class OrderServiceImpl implements OrderService {
 		final Order order = repository.save(toOrderEntity(orderRequest, UUID.randomUUID().toString()));
 		return toOrderResponse(order);
 	}
+	@Override
+	public OrderResponse getOrder(String id) {
+		final Order order = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found order with id "+id));
+		return toOrderResponse(order);
+	}
 
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())
@@ -37,7 +41,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	private static OrderResponse toOrderResponse(Order order) {
-		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).build();
+		return OrderResponse.builder()
+				.orderId(order.getId())
+				.orderStatus(order.getOrderStatus())
+				.amount(order.getAmount())
+				.productId(order.getProductId())
+				.orderDate(order.getOrderDate())
+				.build();
 	}
 
 }
