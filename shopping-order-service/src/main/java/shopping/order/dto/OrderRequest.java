@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class OrderRequest {
-
+	private String id;
 	private long productId;
 	private long totalAmount;
 	private long quantity;
-
+	private String orderDate;
 }
