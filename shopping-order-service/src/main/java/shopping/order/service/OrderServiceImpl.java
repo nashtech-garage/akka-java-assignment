@@ -32,6 +32,16 @@ public class OrderServiceImpl implements OrderService {
 		final Order order = repository.findById(id).orElseThrow(() -> new RuntimeException("Not found order with id "+id));
 		return toOrderResponse(order);
 	}
+	@Override
+	public OrderResponse editOrder(OrderRequest orderRequest, String id){
+		final Order order =  repository.findById(id).orElseThrow(() -> new RuntimeException("Not found order with id "+id));
+		order.setOrderDate(LocalDateTime.now());
+		order.setOrderStatus(OrderStatus.UPDATE);
+		order.setAmount(orderRequest.getTotalAmount());
+		order.setQuantity(orderRequest.getQuantity());
+		order.setProductId(orderRequest.getProductId());
+		return toOrderResponse(repository.save(order));
+	}
 
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())

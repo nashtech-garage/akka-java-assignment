@@ -50,6 +50,9 @@ public class OrderServiceRoutes {
 	private CompletionStage<OrderActors.ActionPerformed> getOrderId(String id) {
 		return AskPattern.ask(actorRef, ref -> new OrderActors.GetOrder(id, ref), askTimeout, scheduler);
 	}
+	private CompletionStage<OrderActors.ActionPerformed> editOrderId(OrderRequest orderRequest, String id) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.EditOrder(id,orderRequest, ref), askTimeout, scheduler);
+	}
 	private static final ObjectMapper objectMapper =
 			JsonMapper.builder()
 					.enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
@@ -75,7 +78,12 @@ public class OrderServiceRoutes {
 					return onSuccess(() -> order, performed -> complete( StatusCodes.OK, performed, Jackson.marshaller(objectMapper)).orElse(
 							complete(StatusCodes.NOT_FOUND, "Not Found")
 					));
-				})))
+				})),
+				put(()-> path(segment(), id -> entity(Jackson.unmarshaller(OrderRequest.class),
+						order -> onSuccess(editOrderId(order,id), performed -> {
+							return complete(StatusCodes.OK, performed, Jackson.marshaller(objectMapper));
+						}))))
+				)
 
 		);
 	}

@@ -34,6 +34,16 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 			this.replyTo = replyTo;
 		}
 	}
+	public static final class EditOrder implements Command {
+		public final String id;
+		public final OrderRequest orderRequest;
+		public final ActorRef<ActionPerformed> replyTo;
+		public EditOrder(String id,OrderRequest orderRequest, ActorRef<ActionPerformed> replyTo) {
+			this.id = id;
+			this.orderRequest = orderRequest;
+			this.replyTo = replyTo;
+		}
+	}
 
 
 	public static final class ActionPerformed implements Command {
@@ -62,6 +72,10 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		getOrder.replyTo.tell(new ActionPerformed(orderService.getOrder(getOrder.id)));
 		return this;
 	}
+	private Behavior<Command> onEditOrder(EditOrder editOrder){
+		editOrder.replyTo.tell(new ActionPerformed(orderService.editOrder(editOrder.orderRequest, editOrder.id)));
+		return this;
+	}
 
 	public static Behavior<Command> create(OrderService orderService) {
 		return Behaviors.setup(ctx -> {
@@ -71,7 +85,11 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
 	@Override
 	public Receive<Command> createReceive() {
-		return newReceiveBuilder().onMessage(CreateOrder.class, this::onCreateOrder).onMessage(GetOrder.class, this::onGetOrder).build();
+		return newReceiveBuilder()
+				.onMessage(CreateOrder.class, this::onCreateOrder)
+				.onMessage(GetOrder.class, this::onGetOrder)
+				.onMessage(EditOrder.class,this::onEditOrder)
+				.build();
 	}
 
 }

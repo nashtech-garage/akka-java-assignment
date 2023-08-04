@@ -8,5 +8,6 @@ public interface OrderService {
 	OrderResponse createOrder(OrderRequest orderRequest);
 	OrderResponse getOrder(String id);
 
+	OrderResponse editOrder(OrderRequest orderRequest, String id);
 
 }
