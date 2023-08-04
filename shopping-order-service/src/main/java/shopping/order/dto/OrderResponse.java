@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package shopping.order.dto;
 
@@ -11,13 +11,16 @@ import shopping.order.entity.OrderStatus;
 
 /**
  * @author loinguyenx
- *
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class OrderResponse {
-	private String orderId;
-	private OrderStatus orderStatus;
+    private String orderId;
+    private long productId;
+    private long quantity;
+    private String orderDate;
+    private long totalAmount;
+    private OrderStatus orderStatus;
 }

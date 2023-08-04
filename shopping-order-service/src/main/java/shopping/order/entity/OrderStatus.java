@@ -1,5 +1,5 @@
 package shopping.order.entity;
 
 public enum OrderStatus {
-	CREATED, CANCELLED, DELETED
+    CREATED, CANCELLED, DELETED
 }
