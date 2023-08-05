@@ -3,16 +3,13 @@
  */
 package shopping.order;
 
-import static akka.http.javadsl.server.Directives.complete;
-import static akka.http.javadsl.server.Directives.concat;
-import static akka.http.javadsl.server.Directives.entity;
-import static akka.http.javadsl.server.Directives.onSuccess;
-import static akka.http.javadsl.server.Directives.pathPrefix;
-import static akka.http.javadsl.server.Directives.post;
+import static akka.http.javadsl.server.Directives.*;
+import static akka.http.javadsl.server.PathMatchers.segment;
 
 import java.time.Duration;
 import java.util.concurrent.CompletionStage;
 
+import akka.http.scaladsl.server.PathMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +43,13 @@ public class OrderServiceRoutes {
 		return AskPattern.ask(actorRef, ref -> new OrderActors.CreateOrder(orderRequest, ref), askTimeout, scheduler);
 	}
 
+	private CompletionStage<OrderActors.ActionPerformed> updateOrder(OrderRequest orderRequest) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.UpdateOrder(orderRequest, ref), askTimeout, scheduler);
+	}
+
+	private CompletionStage<OrderActors.ActionPerformed> getOrder(String id) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.GetOrder(id, ref), askTimeout, scheduler);
+	}
 	/**
 	 * This method creates one route (of possibly many more that will be part of
 	 * your Web App)
@@ -58,8 +62,18 @@ public class OrderServiceRoutes {
 						order -> onSuccess(createOrder(order), performed -> {
 							log.info("Create result: {}", performed.orderResponse);
 							return complete(StatusCodes.CREATED, performed, Jackson.marshaller());
-						})))));
+						}))),
+				put(() -> entity(Jackson.unmarshaller(OrderRequest.class),
+						order -> onSuccess(updateOrder(order), performed -> {
+							log.info("Update result: {}", performed.orderResponse);
+							return complete(StatusCodes.OK, performed, Jackson.marshaller());
+						}))),
+				get(() -> path(segment(),  id -> {
+							CompletionStage<OrderActors.ActionPerformed> order = getOrder(id);
+							return onSuccess(() -> order, performed -> performed.orderResponse != null ?
+							complete(StatusCodes.OK, performed, Jackson.marshaller()) : complete(StatusCodes.NOT_FOUND));
+						}))
+				));
 	}
 	// #all-routes
-
 }
