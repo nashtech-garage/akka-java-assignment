@@ -10,6 +10,8 @@ public interface OrderService {
 	
 	OrderResponse createOrder(OrderRequest orderRequest);
 
-	OrderResponse getOrder(String orderId);
+	OrderRequest getOrder(String orderId);
+
+	OrderResponse updateOrder(OrderRequest orderRequest, String orderId);
 	
 }

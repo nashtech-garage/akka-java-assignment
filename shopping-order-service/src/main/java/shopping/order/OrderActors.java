@@ -34,9 +34,20 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
 	public static final class GetOrder implements Command {
 		public final String orderId;
-		public final ActorRef<ActionPerformed> replyTo;
-		public GetOrder(String orderId, ActorRef<ActionPerformed> replyTo) {
+		public final ActorRef<GetOrderDetail> replyTo;
+		public GetOrder(String orderId, ActorRef<GetOrderDetail> replyTo) {
 			this.orderId = orderId;
+			this.replyTo = replyTo;
+		}
+	}
+
+	public static final class UpdateOrder implements Command {
+		public final String orderId;
+		public final OrderRequest orderRequest;
+		public final ActorRef<ActionPerformed> replyTo;
+		public UpdateOrder(OrderRequest orderRequest, String orderId, ActorRef<ActionPerformed> replyTo) {
+			this.orderId = orderId;
+			this.orderRequest = orderRequest;
 			this.replyTo = replyTo;
 		}
 	}
@@ -46,6 +57,13 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
 		public ActionPerformed(OrderResponse orderResponse) {
 			this.orderResponse = orderResponse;
+		}
+	}
+
+	public static final class GetOrderDetail implements Command {
+		public final OrderRequest orderDetail;
+		public GetOrderDetail(OrderRequest orderDetail) {
+			this.orderDetail = orderDetail;
 		}
 	}
 
@@ -65,7 +83,12 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 	}
 
 	private Behavior<Command> onGetOrder(GetOrder getOrder) {
-		getOrder.replyTo.tell(new ActionPerformed(orderService.getOrder(getOrder.orderId)));
+		getOrder.replyTo.tell(new GetOrderDetail(orderService.getOrder(getOrder.orderId)));
+		return this;
+	}
+
+	private Behavior<Command> onUpdateOrder(UpdateOrder updateOrder) {
+		updateOrder.replyTo.tell(new ActionPerformed(orderService.updateOrder(updateOrder.orderRequest, updateOrder.orderId)));
 		return this;
 	}
 
@@ -80,6 +103,7 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		return newReceiveBuilder()
 				.onMessage(CreateOrder.class, this::onCreateOrder)
 				.onMessage(GetOrder.class, this::onGetOrder)
+				.onMessage(UpdateOrder.class, this::onUpdateOrder)
 				.build();
 	}
 

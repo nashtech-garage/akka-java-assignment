@@ -43,8 +43,12 @@ public class OrderServiceRoutes {
         return AskPattern.ask(actorRef, ref -> new OrderActors.CreateOrder(orderRequest, ref), askTimeout, scheduler);
     }
 
-    private CompletionStage<OrderActors.ActionPerformed> getOrder(String id) {
+    private CompletionStage<OrderActors.GetOrderDetail> getOrder(String id) {
         return AskPattern.ask(actorRef, ref -> new OrderActors.GetOrder(id, ref), askTimeout, scheduler);
+    }
+
+    private CompletionStage<OrderActors.ActionPerformed> updateOrder(OrderRequest orderRequest, String orderId) {
+        return AskPattern.ask(actorRef, ref -> new OrderActors.UpdateOrder(orderRequest, orderId, ref), askTimeout, scheduler);
     }
 
     /**
@@ -64,12 +68,21 @@ public class OrderServiceRoutes {
 								// # Get Order Information by ID
                                 path(PathMatchers.segment(), (String orderId) ->
                                         get(() -> {
-                                            CompletionStage<OrderActors.ActionPerformed> order = getOrder(orderId);
+                                            CompletionStage<OrderActors.GetOrderDetail> order = getOrder(orderId);
                                             return onSuccess(order, performed ->
-                                                    complete(StatusCodes.FOUND, performed, Jackson.marshaller())
+                                                    null != performed.orderDetail ?
+                                                    complete(StatusCodes.FOUND, performed, Jackson.marshaller()):
+                                                            complete(StatusCodes.NOT_FOUND)
                                             );
                                         })
-                                )
+                                ),
+                                // # Update Order Information by Id
+                                path(PathMatchers.segment(), (String orderId) ->
+                                        put(() -> entity(Jackson.unmarshaller(OrderRequest.class),
+                                                order -> onSuccess(updateOrder(order, orderId), performed -> null != performed.orderResponse?
+                                                        complete(StatusCodes.ACCEPTED, performed, Jackson.marshaller()):
+                                                        complete(StatusCodes.NOT_MODIFIED))))
+                                        )
                         )
         );
     }
