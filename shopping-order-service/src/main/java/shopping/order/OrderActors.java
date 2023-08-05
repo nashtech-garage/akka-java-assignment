@@ -1,8 +1,5 @@
 package shopping.order;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.AbstractBehavior;
@@ -12,21 +9,41 @@ import akka.actor.typed.javadsl.Receive;
 import shopping.order.dto.OrderRequest;
 import shopping.order.dto.OrderResponse;
 import shopping.order.service.OrderService;
-import shopping.order.service.OrderServiceImpl;
 
 public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
-	private static final Logger logger = LoggerFactory.getLogger(OrderActors.class);
-
 	public static final class CreateOrder implements Command {
-		public final OrderRequest orderRequest;
-		public final ActorRef<ActionPerformed> replyTo;
+	  private final OrderRequest orderRequest;
+	  private final ActorRef<ActionPerformed> replyTo;
 
 		public CreateOrder(OrderRequest orderRequest, ActorRef<ActionPerformed> replyTo) {
 			this.orderRequest = orderRequest;
 			this.replyTo = replyTo;
 		}
 	}
+
+	public static final class GetOrder implements Command {
+	  
+	  private final String id;
+	  private final ActorRef<ActionPerformed> replyTo;
+	  
+    public GetOrder(String id, ActorRef<ActionPerformed> replyTo) {
+      this.id = id;
+      this.replyTo = replyTo;
+    }
+	}
+	
+	 public static final class UpdateOrder implements Command {
+	    private final String id;
+	    private final OrderRequest orderRequest;
+	    private final ActorRef<ActionPerformed> replyTo;
+
+	    public UpdateOrder(String id, OrderRequest orderRequest, ActorRef<ActionPerformed> replyTo) {
+	      this.id = id;
+	      this.orderRequest = orderRequest;
+	      this.replyTo = replyTo;
+	    }
+	  }
 
 	public static final class ActionPerformed implements Command {
 		public final OrderResponse orderResponse;
@@ -50,6 +67,16 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		createOrder.replyTo.tell(new ActionPerformed(orderService.createOrder(createOrder.orderRequest)));
 		return this;
 	}
+	
+  private Behavior<Command> onGetOrder(GetOrder getOrder) {
+    getOrder.replyTo.tell(new ActionPerformed(orderService.getOrder(getOrder.id)));
+    return this;
+  }
+  
+  private Behavior<Command> onUpdateOrder(UpdateOrder updateOrder) {
+    updateOrder.replyTo.tell(new ActionPerformed(orderService.updateOrder(updateOrder.id, updateOrder.orderRequest)));
+    return this;
+  }
 
 	public static Behavior<Command> create(OrderService orderService) {
 		return Behaviors.setup(ctx -> {
@@ -59,7 +86,11 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
 	@Override
 	public Receive<Command> createReceive() {
-		return newReceiveBuilder().onMessage(CreateOrder.class, this::onCreateOrder).build();
+		return newReceiveBuilder()
+		    .onMessage(CreateOrder.class, this::onCreateOrder)
+	      .onMessage(GetOrder.class, this::onGetOrder)
+	      .onMessage(UpdateOrder.class, this::onUpdateOrder)
+		    .build();
 	}
 
 }

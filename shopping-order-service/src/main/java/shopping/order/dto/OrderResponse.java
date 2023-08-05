@@ -18,6 +18,16 @@ import shopping.order.entity.OrderStatus;
 @NoArgsConstructor
 @Builder
 public class OrderResponse {
-	private String orderId;
-	private OrderStatus orderStatus;
+  
+  private String orderId;
+
+  private OrderStatus orderStatus;
+
+  private long productId;
+ 
+  private long quantity;
+  
+  private String orderDate;
+  
+  private long amount;
 }
