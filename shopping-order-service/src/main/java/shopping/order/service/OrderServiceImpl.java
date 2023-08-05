@@ -68,6 +68,7 @@ public class OrderServiceImpl implements OrderService {
 				.productId(order.getProductId())
 				.orderDate(formatDate(order.getOrderDate()))
 				.totalAmount(order.getAmount())
+				.quantity(order.getQuantity())
 				.build();
 	}
 

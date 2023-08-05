@@ -23,4 +23,5 @@ public class OrderResponse {
 	private long productId;
 	private String orderDate;
 	private long totalAmount;
+	private long quantity;
 }
