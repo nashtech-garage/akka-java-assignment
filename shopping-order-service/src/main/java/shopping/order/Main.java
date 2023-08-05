@@ -14,7 +14,7 @@ import shopping.order.service.OrderServiceImpl;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		// #server-bootstrapping
 
 		Behavior<NotUsed> rootBehavior = Behaviors.setup(context -> {

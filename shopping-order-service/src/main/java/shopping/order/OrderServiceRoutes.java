@@ -9,6 +9,11 @@ import static akka.http.javadsl.server.Directives.entity;
 import static akka.http.javadsl.server.Directives.onSuccess;
 import static akka.http.javadsl.server.Directives.pathPrefix;
 import static akka.http.javadsl.server.Directives.post;
+import static akka.http.javadsl.server.Directives.path;
+import static akka.http.javadsl.server.Directives.put;
+import static akka.http.javadsl.server.Directives.get;
+import static akka.http.javadsl.server.PathMatchers.segment;
+
 
 import java.time.Duration;
 import java.util.concurrent.CompletionStage;
@@ -45,6 +50,14 @@ public class OrderServiceRoutes {
 	private CompletionStage<OrderActors.ActionPerformed> createOrder(OrderRequest orderRequest) {
 		return AskPattern.ask(actorRef, ref -> new OrderActors.CreateOrder(orderRequest, ref), askTimeout, scheduler);
 	}
+	
+  private CompletionStage<OrderActors.ActionPerformed> getOrder(String id) {
+    return AskPattern.ask(actorRef, ref -> new OrderActors.GetOrder(id, ref), askTimeout, scheduler);
+  }
+
+  private CompletionStage<OrderActors.ActionPerformed> updateOrder(String id, OrderRequest orderRequest) {
+    return AskPattern.ask(actorRef, ref -> new OrderActors.UpdateOrder(id, orderRequest, ref), askTimeout, scheduler);
+  }
 
 	/**
 	 * This method creates one route (of possibly many more that will be part of
@@ -58,8 +71,14 @@ public class OrderServiceRoutes {
 						order -> onSuccess(createOrder(order), performed -> {
 							log.info("Create result: {}", performed.orderResponse);
 							return complete(StatusCodes.CREATED, performed, Jackson.marshaller());
-						})))));
+            }))),
+				
+        path(segment(), id -> concat(
+          get(() -> onSuccess(getOrder(id), performed -> complete(StatusCodes.OK, performed, Jackson.marshaller()))),
+          put(() -> entity(Jackson.unmarshaller(OrderRequest.class), orderRequest -> onSuccess(updateOrder(id, orderRequest),
+                  performed -> complete(StatusCodes.OK, performed, Jackson.marshaller()))))
+        ))
+    ));
 	}
 	// #all-routes
-
 }

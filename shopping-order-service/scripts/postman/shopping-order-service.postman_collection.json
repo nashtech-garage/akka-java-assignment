@@ -1,13 +1,13 @@
 {
 	"info": {
-		"_postman_id": "9e6ca9d4-e724-4fa4-a76f-9f4f23318e46",
+		"_postman_id": "3647816b-1cc9-4122-a7b8-69a6cb6fc346",
 		"name": "shopping-order-service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "259031"
+		"_exporter_id": "3709749"
 	},
 	"item": [
 		{
-			"name": "CreateOrder",
+			"name": "Create Order",
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -21,14 +21,63 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8081/orders",
+					"raw": "http://localhost:8080/orders",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8081",
+					"port": "8080",
 					"path": [
 						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Order",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/orders/cd9ec273-0631-4bb0-850c-7876fcb5dfa7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders",
+						"cd9ec273-0631-4bb0-850c-7876fcb5dfa7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"totalAmount\": 2000,\r\n    \"productId\": 1,\r\n    \"quantity\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/orders/cd9ec273-0631-4bb0-850c-7876fcb5dfa7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders",
+						"cd9ec273-0631-4bb0-850c-7876fcb5dfa7"
 					]
 				}
 			},

@@ -10,5 +10,5 @@ public interface OrderRepository extends Repository<Order, Long> {
 
 	Order save(Order order);
 
-	Optional<Order> findById(Long id);
+  Optional<Order> findById(String orderId);
 }
