@@ -5,5 +5,5 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: shopping-cart
-      POSTGRES_PASSWORD: shopping-cart
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
