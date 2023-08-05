@@ -14,22 +14,22 @@ import shopping.order.service.OrderServiceImpl;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
-		// #server-bootstrapping
+    public static void main (String[] args) {
+        // #server-bootstrapping
 
-		Behavior<NotUsed> rootBehavior = Behaviors.setup(context -> {
-			ApplicationContext springContext = SpringIntegration.applicationContext(context.getSystem());
-			OrderRepository orderRepository = springContext.getBean(OrderRepository.class);
-			OrderService orderService = new OrderServiceImpl(orderRepository);
-			ActorRef<OrderActors.Command> actorRef = context.spawn(OrderActors.create(orderService), "OrderService");
-			OrderServiceRoutes orderRoutes = new OrderServiceRoutes(context.getSystem(), actorRef);
+        Behavior<NotUsed> rootBehavior = Behaviors.setup(context -> {
+            ApplicationContext springContext = SpringIntegration.applicationContext(context.getSystem());
+            OrderRepository orderRepository = springContext.getBean(OrderRepository.class);
+            OrderService orderService = new OrderServiceImpl(orderRepository);
+            ActorRef<OrderActors.Command> actorRef = context.spawn(OrderActors.create(orderService), "OrderService");
+            OrderServiceRoutes orderRoutes = new OrderServiceRoutes(context.getSystem(), actorRef);
 
-			OrderServiceHttpServer.startHTTPServer(orderRoutes.routes(), context.getSystem());
-			return Behaviors.empty();
-		});
-		// boot up server using the route as defined below
-		ActorSystem.create(rootBehavior, "OrderServiceHttpServer");
-		// #server-bootstrapping
-	}
+            OrderServiceHttpServer.startHTTPServer(orderRoutes.routes(), context.getSystem());
+            return Behaviors.empty();
+        });
+        // boot up server using the route as defined below
+        ActorSystem.create(rootBehavior, "OrderServiceHttpServer");
+        // #server-bootstrapping
+    }
 
 }
