@@ -2,6 +2,7 @@ package shopping.order.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -28,6 +29,13 @@ public class OrderServiceImpl implements OrderService {
 		final Order order = repository.save(toOrderEntity(orderRequest, UUID.randomUUID().toString()));
 		return toOrderResponse(order);
 	}
+
+	@Override
+	public OrderResponse getOrder(String orderId) {
+		Order order = repository.findById(orderId);
+		return toOrderResponse(order);
+	}
+
 
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())
