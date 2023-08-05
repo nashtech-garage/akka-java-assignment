@@ -20,4 +20,7 @@ import shopping.order.entity.OrderStatus;
 public class OrderResponse {
 	private String orderId;
 	private OrderStatus orderStatus;
+	private long productId;
+	private String orderDate;
+	private long totalAmount;
 }
