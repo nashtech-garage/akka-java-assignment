@@ -2,6 +2,7 @@ package shopping.order.service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -29,15 +30,37 @@ public class OrderServiceImpl implements OrderService {
 		return toOrderResponse(order);
 	}
 
+	@Override
+	public OrderResponse getOrderById(String id) {
+		final Order order = repository.findById(id).orElse(null);
+		return toOrderResponse(order);
+	}
+
+	@Override
+	public OrderResponse updateOrder(String id, OrderRequest orderRequest) {
+		final Order order = repository.findById(id).orElseThrow();
+		order.setProductId(orderRequest.getProductId());
+		order.setAmount(orderRequest.getTotalAmount());
+		order.setQuantity(orderRequest.getQuantity());
+		order.setOrderStatus(OrderStatus.UPDATED);
+		order.setOrderDate(LocalDateTime.now());
+		return toOrderResponse(repository.save(order));
+	}
+
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())
 				.amount(orderRequest.getTotalAmount()).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.CREATED)
 				.build();
-
 	}
 
 	private static OrderResponse toOrderResponse(Order order) {
-		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).build();
+		return OrderResponse.builder()
+				.orderId(order.getId())
+				.totalAmount(order.getAmount())
+				.quantity(order.getQuantity())
+				.productId(order.getProductId())
+				.orderDate(order.getOrderDate().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+				.orderStatus(order.getOrderStatus())
+				.build();
 	}
-
 }
