@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "9e6ca9d4-e724-4fa4-a76f-9f4f23318e46",
+		"_postman_id": "5ab7a6c1-c662-4092-a2ec-53118af040a6",
 		"name": "shopping-order-service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "259031"
+		"_exporter_id": "24522066"
 	},
 	"item": [
 		{
@@ -29,6 +29,67 @@
 					"port": "8081",
 					"path": [
 						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetOrder",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/orders/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "865bfe80-ed4b-4a56-8329-23578e6d4284"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateOrder",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": 1,\r\n    \"quantity\": 1,\r\n    \"totalAmount\": 10001\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/orders/:id",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "865bfe80-ed4b-4a56-8329-23578e6d4284"
+						}
 					]
 				}
 			},
