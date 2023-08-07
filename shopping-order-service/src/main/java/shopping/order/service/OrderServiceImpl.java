@@ -29,6 +29,20 @@ public class OrderServiceImpl implements OrderService {
 		return toOrderResponse(order);
 	}
 
+	@Override
+	public OrderResponse getOrderById(String productId) {
+		return toOrderResponse(repository.findById(productId).orElseThrow(() -> new RuntimeException("Not fount order "+productId)));
+	}
+
+	@Override
+	public OrderResponse putOrder(String id, OrderRequest orderRequest) {
+		Order order = repository.findById(id).orElseThrow(() -> new RuntimeException("Not fount order "+id));
+		order.setProductId(orderRequest.getProductId());
+		order.setAmount(orderRequest.getTotalAmount());
+		order.setQuantity(orderRequest.getQuantity());
+		return toOrderResponse(order);
+	}
+
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())
 				.amount(orderRequest.getTotalAmount()).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.CREATED)
@@ -37,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	private static OrderResponse toOrderResponse(Order order) {
-		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).build();
+		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).productId(order.getProductId()).quantity(order.getQuantity()).totalAmount(order.getAmount()).build();
 	}
 
 }
