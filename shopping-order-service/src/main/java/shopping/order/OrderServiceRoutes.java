@@ -3,13 +3,6 @@
  */
 package shopping.order;
 
-import static akka.http.javadsl.server.Directives.complete;
-import static akka.http.javadsl.server.Directives.concat;
-import static akka.http.javadsl.server.Directives.entity;
-import static akka.http.javadsl.server.Directives.onSuccess;
-import static akka.http.javadsl.server.Directives.pathPrefix;
-import static akka.http.javadsl.server.Directives.post;
-
 import java.time.Duration;
 import java.util.concurrent.CompletionStage;
 
@@ -25,6 +18,8 @@ import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.Route;
 import shopping.order.OrderActors.Command;
 import shopping.order.dto.OrderRequest;
+
+import static akka.http.javadsl.server.Directives.*;
 
 /**
  * @author loinguyenx
@@ -46,20 +41,60 @@ public class OrderServiceRoutes {
 		return AskPattern.ask(actorRef, ref -> new OrderActors.CreateOrder(orderRequest, ref), askTimeout, scheduler);
 	}
 
+	private CompletionStage<OrderActors.ActionPerformed> getOrderById(String id) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.GetOrder(id, ref), askTimeout, scheduler);
+	}
+
+	private CompletionStage<OrderActors.ActionPerformed> updateOrder(String id, OrderRequest orderRequest) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.UpdateOrder(id, orderRequest, ref), askTimeout, scheduler);
+	}
+
 	/**
 	 * This method creates one route (of possibly many more that will be part of
 	 * your Web App)
 	 */
 	// #all-routes
 	public Route routes() {
-		return pathPrefix("orders", () -> concat(
-				// # Create an Order
-				post(() -> entity(Jackson.unmarshaller(OrderRequest.class),
-						order -> onSuccess(createOrder(order), performed -> {
-							log.info("Create result: {}", performed.orderResponse);
-							return complete(StatusCodes.CREATED, performed, Jackson.marshaller());
-						})))));
+		return pathPrefix("orders", () ->
+			concat(
+				pathEnd(() ->
+					post(() ->
+						entity(Jackson.unmarshaller(OrderRequest.class),
+							order -> onSuccess(createOrder(order), performed -> {
+								log.info("Create result: {}", performed.orderResponse);
+								return complete(StatusCodes.CREATED, performed, Jackson.marshaller());
+							})
+						)
+					)
+				),
+				path( (String id) ->
+					pathEnd(() ->
+						concat(
+							get(() ->
+								onSuccess(getOrderById(id), performed -> {
+									if(performed.orderResponse == null)
+										return complete(StatusCodes.NOT_FOUND);
+									log.info("Result: {}", performed.orderResponse);
+									return complete(StatusCodes.OK, performed, Jackson.marshaller());
+								})
+							),
+							put(()->
+								entity(Jackson.unmarshaller(OrderRequest.class),
+									order -> onSuccess(updateOrder(id, order), performed -> {
+										if(performed.orderResponse == null)
+											return complete(StatusCodes.NOT_FOUND);
+										log.info("Updated result: {}", performed.orderResponse);
+										return complete(StatusCodes.OK, performed, Jackson.marshaller());
+									})
+								)
+							)
+						)
+					)
+				)
+
+			)
+		);
+
 	}
 	// #all-routes
-
 }

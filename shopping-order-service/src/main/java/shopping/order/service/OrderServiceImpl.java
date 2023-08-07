@@ -1,11 +1,8 @@
 package shopping.order.service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import shopping.order.dto.OrderRequest;
 import shopping.order.dto.OrderResponse;
@@ -15,7 +12,6 @@ import shopping.order.repository.OrderRepository;
 
 public class OrderServiceImpl implements OrderService {
 
-	private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
 	private final OrderRepository repository;
 
@@ -29,6 +25,26 @@ public class OrderServiceImpl implements OrderService {
 		return toOrderResponse(order);
 	}
 
+	@Override
+	public OrderResponse getOrderById(String id) {
+		Order order = repository.findById(id).orElse(null);
+		if(order == null)
+			return null;
+		return toOrderResponse(order);
+	}
+
+	@Override
+	public OrderResponse upDateOrder(String id, OrderRequest orderRequest) {
+		Order order = repository.findById(id).orElse(null);
+		if(order == null)
+			return null;
+		order.setProductId(orderRequest.getProductId());
+		order.setAmount(orderRequest.getTotalAmount());
+		order.setQuantity(orderRequest.getQuantity());
+		Order newOrder = repository.save(order);
+		return toOrderResponse(newOrder);
+	}
+
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())
 				.amount(orderRequest.getTotalAmount()).orderDate(LocalDateTime.now()).orderStatus(OrderStatus.CREATED)
@@ -37,7 +53,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	private static OrderResponse toOrderResponse(Order order) {
-		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).build();
+		return OrderResponse.builder()
+				.orderId(order.getId())
+				.amount(order.getAmount())
+				.productId(order.getProductId())
+				.quantity(order.getQuantity())
+				.orderStatus(order.getOrderStatus())
+				.build();
 	}
 
 }

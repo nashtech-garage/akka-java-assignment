@@ -21,6 +21,7 @@
 		<APP_CONFIG>application.conf</APP_CONFIG>
 		<!-- Version of the Docker image is derived from git commit.
              It can be defined with -Dversion.number=0.1-SNAPSHOT if git is not used -->
+		<!--suppress UnresolvedMavenProperty -->
 		<version.number>${git.commit.time}-${git.commit.id.abbrev}</version.number>
 		<akka-diagnostics.version>2.0.0</akka-diagnostics.version>
 		<lombok.version>1.18.28</lombok.version>
@@ -165,22 +166,22 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-					<compilerArgs>
-						<arg>-Xlint:unchecked</arg>
-						<arg>-Xlint:deprecation</arg>
-						<arg>-parameters</arg>
-					</compilerArgs>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>${lombok.version}</version>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
