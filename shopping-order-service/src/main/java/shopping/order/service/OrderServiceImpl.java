@@ -28,6 +28,22 @@ public class OrderServiceImpl implements OrderService {
 		final Order order = repository.save(toOrderEntity(orderRequest, UUID.randomUUID().toString()));
 		return toOrderResponse(order);
 	}
+	@Override
+	public OrderResponse getOrderById(String id) {
+		final Order order = repository.findById(id).orElse(null);
+		return toOrderResponse(order);
+	}
+
+	@Override
+	public OrderResponse updateOrder(String id, OrderRequest orderRequest) {
+		final Order order = repository.findById(id).orElseThrow();
+		order.setProductId(orderRequest.getProductId());
+		order.setAmount(orderRequest.getTotalAmount());
+		order.setQuantity(orderRequest.getQuantity());
+		order.setOrderStatus(OrderStatus.UPDATED);
+		order.setOrderDate(LocalDateTime.now());
+		return toOrderResponse(repository.save(order));
+	}
 
 	private static Order toOrderEntity(OrderRequest orderRequest, String id) {
 		return Order.builder().id(id).productId(orderRequest.getProductId()).quantity(orderRequest.getQuantity())
@@ -37,7 +53,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	private static OrderResponse toOrderResponse(Order order) {
-		return OrderResponse.builder().orderId(order.getId()).orderStatus(order.getOrderStatus()).build();
+		return OrderResponse.builder()
+				.orderId(order.getId())
+				.totalAmount(order.getAmount())
+				.quantity(order.getQuantity())
+				.productId(order.getProductId())
+				.orderStatus(order.getOrderStatus()).build();
 	}
 
 }

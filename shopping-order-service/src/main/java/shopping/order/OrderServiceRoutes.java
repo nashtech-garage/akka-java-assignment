@@ -3,16 +3,12 @@
  */
 package shopping.order;
 
-import static akka.http.javadsl.server.Directives.complete;
-import static akka.http.javadsl.server.Directives.concat;
-import static akka.http.javadsl.server.Directives.entity;
-import static akka.http.javadsl.server.Directives.onSuccess;
-import static akka.http.javadsl.server.Directives.pathPrefix;
-import static akka.http.javadsl.server.Directives.post;
-
 import java.time.Duration;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
+import java.util.function.Supplier;
 
+import akka.http.javadsl.server.PathMatchers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +21,13 @@ import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.Route;
 import shopping.order.OrderActors.Command;
 import shopping.order.dto.OrderRequest;
+import shopping.order.entity.Order;
+
+import static akka.http.javadsl.server.PathMatchers.longSegment;
+import static akka.http.javadsl.server.PathMatchers.segment;
+
+
+import static akka.http.javadsl.server.Directives.*;
 
 /**
  * @author loinguyenx
@@ -43,7 +46,16 @@ public class OrderServiceRoutes {
 	}
 
 	private CompletionStage<OrderActors.ActionPerformed> createOrder(OrderRequest orderRequest) {
+		// goi thang Orderactos
 		return AskPattern.ask(actorRef, ref -> new OrderActors.CreateOrder(orderRequest, ref), askTimeout, scheduler);
+	}
+
+	private CompletionStage<OrderActors.ActionPerformed> getOrder(String id) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.GetOrder(id, ref), askTimeout, scheduler);
+	}
+
+	private CompletionStage<OrderActors.ActionPerformed> updateOrder(String id, OrderRequest orderRequest) {
+		return AskPattern.ask(actorRef, ref -> new OrderActors.UpdateOrder(id, orderRequest, ref), askTimeout, scheduler);
 	}
 
 	/**
@@ -58,8 +70,27 @@ public class OrderServiceRoutes {
 						order -> onSuccess(createOrder(order), performed -> {
 							log.info("Create result: {}", performed.orderResponse);
 							return complete(StatusCodes.CREATED, performed, Jackson.marshaller());
-						})))));
+						}))),
+				path(PathMatchers.segment(),
+						orderId -> concat(
+								get(() -> {
+									return onSuccess(getOrder(orderId), performed -> {
+										log.info("Get result: {}", performed.orderResponse);
+										return complete(StatusCodes.OK, performed, Jackson.marshaller());
+									});
+								}),
+								put(() -> entity(Jackson.unmarshaller(OrderRequest.class),
+										orderReq -> onSuccess(updateOrder(orderId, orderReq), performed -> {
+											log.info("Update result: {}", performed.orderResponse);
+											return complete(StatusCodes.OK, performed, Jackson.marshaller());
+										})
+								))
+						)
+				)
+		));
 	}
+
+
 	// #all-routes
 
 }

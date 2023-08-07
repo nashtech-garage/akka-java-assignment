@@ -12,12 +12,11 @@ import akka.actor.typed.javadsl.Receive;
 import shopping.order.dto.OrderRequest;
 import shopping.order.dto.OrderResponse;
 import shopping.order.service.OrderService;
-import shopping.order.service.OrderServiceImpl;
 
 public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 
 	private static final Logger logger = LoggerFactory.getLogger(OrderActors.class);
-
+	// tao ra mot thang nhu nay gui di
 	public static final class CreateOrder implements Command {
 		public final OrderRequest orderRequest;
 		public final ActorRef<ActionPerformed> replyTo;
@@ -28,6 +27,25 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		}
 	}
 
+	public static final class GetOrder  implements Command{
+		public final String orderId;
+		public final ActorRef<ActionPerformed> replyTo;
+		public GetOrder(String orderId,ActorRef<ActionPerformed> replyTo) {
+			this.orderId = orderId;
+			this.replyTo = replyTo;
+		}
+	}
+	public static final class UpdateOrder implements Command {
+		public final String id;
+		public final OrderRequest orderRequest;
+		public final ActorRef<ActionPerformed> replyTo;
+
+		public UpdateOrder(String id, OrderRequest orderRequest, ActorRef<ActionPerformed> replyTo) {
+			this.id = id;
+			this.orderRequest = orderRequest;
+			this.replyTo = replyTo;
+		}
+	}
 	public static final class ActionPerformed implements Command {
 		public final OrderResponse orderResponse;
 
@@ -46,8 +64,19 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 		this.orderService = orderService;
 	}
 
+	// create order va tra ve
 	private Behavior<Command> onCreateOrder(CreateOrder createOrder) {
 		createOrder.replyTo.tell(new ActionPerformed(orderService.createOrder(createOrder.orderRequest)));
+		return this;
+	}
+
+	private Behavior<Command> onGetOrder(GetOrder getOrder) {
+		getOrder.replyTo.tell(new ActionPerformed(orderService.getOrderById(getOrder.orderId)));
+		return this;
+	}
+
+	private Behavior<Command> onUpdateOrder(UpdateOrder updateOrder) {
+		updateOrder.replyTo.tell(new ActionPerformed(orderService.updateOrder(updateOrder.id, updateOrder.orderRequest)));
 		return this;
 	}
 
@@ -56,10 +85,15 @@ public class OrderActors extends AbstractBehavior<OrderActors.Command> {
 			return new OrderActors(ctx, orderService);
 		});
 	}
-
+	// Message gui den day
 	@Override
 	public Receive<Command> createReceive() {
-		return newReceiveBuilder().onMessage(CreateOrder.class, this::onCreateOrder).build();
+		System.out.println("Create message received");
+		return newReceiveBuilder()
+				.onMessage(CreateOrder.class, this::onCreateOrder)
+				.onMessage(GetOrder.class, this::onGetOrder)
+				.onMessage(UpdateOrder.class, this::onUpdateOrder)
+				.build();
 	}
 
 }
