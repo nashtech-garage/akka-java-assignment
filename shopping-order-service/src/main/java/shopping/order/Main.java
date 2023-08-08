@@ -1,12 +1,11 @@
 package shopping.order;
 
-import org.springframework.context.ApplicationContext;
-
 import akka.NotUsed;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.Behaviors;
+import org.springframework.context.ApplicationContext;
 import shopping.order.repository.OrderRepository;
 import shopping.order.repository.SpringIntegration;
 import shopping.order.service.OrderService;
@@ -14,7 +13,7 @@ import shopping.order.service.OrderServiceImpl;
 
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		// #server-bootstrapping
 
 		Behavior<NotUsed> rootBehavior = Behaviors.setup(context -> {

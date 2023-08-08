@@ -19,5 +19,9 @@ import shopping.order.entity.OrderStatus;
 @Builder
 public class OrderResponse {
 	private String orderId;
+	private long productId;
+	private long quantity;
+	private String orderDate;
 	private OrderStatus orderStatus;
+	private long amount;
 }
