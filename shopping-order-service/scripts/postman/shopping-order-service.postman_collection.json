@@ -14,7 +14,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"cartId\": 1,\r\n    \"items\": [\r\n        {\r\n            \"itemId\": 1,\r\n            \"quantity\": 5\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"productId\" : 3,\r\n    \"totalAmount\": 4,\r\n    \"quantity\": 5\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -22,12 +22,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/orders",
+					"raw": "http://localhost:8088/orders",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8080",
+					"port": "8088",
 					"path": [
 						"orders"
 					]
@@ -39,7 +39,19 @@
 			"name": "FindOrderById",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/orders/200df737-ecde-46d5-994c-c8b759c867fc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"orders",
+						"200df737-ecde-46d5-994c-c8b759c867fc"
+					]
+				}
 			},
 			"response": []
 		},
@@ -48,6 +60,15 @@
 			"request": {
 				"method": "PUT",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"productId\" : 1,\n    \"totalAmount\": 4,\n    \"quantity\": 4\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://localhost:8081/orders/200df737-ecde-46d5-994c-c8b759c867fc",
 					"protocol": "http",
